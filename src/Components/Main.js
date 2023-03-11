@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Switch, FormControlLabel, FormGroup } from '@mui/material';
+import { Switch, FormControlLabel, FormGroup, TextField,Button } from '@mui/material';
+import CalculateIcon from '@mui/icons-material/Calculate';
 
 import './Main.css'
 
@@ -31,10 +32,48 @@ function Main() {
                 </div>
             </div>
 
-            {/* <div>
-                <input/>
-            </div> */}
-
+            <div className='keys'>
+                <div className='prime'>
+                    <TextField id="outlined-basic" label="P" variant="outlined" />
+                    <TextField id="outlined-basic" label="Q" variant="outlined" />
+                    <Button variant="contained" startIcon={<CalculateIcon/>}
+                    style={{
+                        height:50,
+                        backgroundColor:'#60b0f4',
+                        fontWeight: "bold",
+                    }}>Calculate</Button>   
+                </div>  
+                <div className='key-values'>
+                    <TextField
+                    label="N"
+                    defaultValue=""
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    />
+                    <TextField
+                    label="L"
+                    defaultValue=""
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    />
+                    <TextField
+                    label="E"
+                    defaultValue=""
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    />
+                    <TextField
+                    label="D"
+                    defaultValue=""
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                    />
+                </div>
+            </div>
 
             <div className='output'>
                 <textarea disabled onChange={e => setOutputCount(e.target.value.length)}/>

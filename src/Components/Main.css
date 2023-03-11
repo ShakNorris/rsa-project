@@ -13,6 +13,23 @@ textarea{
     margin-top:10px;
 }
 
+
+.keys{
+    padding: 10px;
+    text-align: center;
+}
+
+.prime > *{
+    margin: 10px;
+}
+
+.key-values{
+    margin-top:20px;
+}
+
+.key-values > *{
+    margin: 10px;
+}
 .main{
     margin-top:-30px;
     display:flex;
@@ -20,7 +37,6 @@ textarea{
     justify-content: space-between;
     padding: 50px;
 }
-
 
 .count{
     display: flex;
