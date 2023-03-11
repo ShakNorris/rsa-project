@@ -1,0 +1,35 @@
+textarea{
+    width:400px;
+    height:400px;
+    resize: none;
+    outline: none;
+    border:1px solid rgb(250, 250, 250);
+    padding:10px;
+}
+
+.main{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px;
+}
+
+
+.count{
+    display: flex;
+    width: inherit;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    margin-top: -30px;
+    margin-right:-5px;
+}
+
+.count span{
+    background-color: #e4e4e4;
+    color: rgb(245, 245, 245);
+    color:black;
+    padding: 0 10px;
+    margin: 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+}
