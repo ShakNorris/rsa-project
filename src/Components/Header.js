@@ -7,7 +7,7 @@ function Header() {
   return (
     <div className='header'>
         <div className='head-items'>
-            <img className="logo" src="/Crypt.png" />
+            <img className="logo" src="/Crypt.png" alt="Project Logo" />
             <h1>RSA-PROJECT</h1>
         </div>
         <div className='link'>

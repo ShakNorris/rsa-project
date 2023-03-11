@@ -7,7 +7,14 @@ textarea{
     padding:10px;
 }
 
+.toggle{
+    display: flex;
+    justify-content: center;
+    margin-top:10px;
+}
+
 .main{
+    margin-top:-30px;
     display:flex;
     align-items: center;
     justify-content: space-between;
