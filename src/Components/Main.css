@@ -20,7 +20,7 @@ textarea{
 }
 
 .prime > *{
-    margin: 10px;
+    margin: 10px !important;
 }
 
 .key-values{
@@ -28,7 +28,7 @@ textarea{
 }
 
 .key-values > *{
-    margin: 10px;
+    margin: 10px !important;
 }
 .main{
     margin-top:-30px;
