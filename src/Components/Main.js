@@ -1,130 +1,178 @@
-import React, { useState, useEffect } from 'react'
-import { Switch, FormControlLabel, FormGroup, TextField,Button } from '@mui/material';
-import CalculateIcon from '@mui/icons-material/Calculate';
-import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
-
-import './Main.css'
+import React, { useState, useEffect } from "react";
+import {
+  InputAdornment,
+  TextField,
+  Button,
+} from "@mui/material";
+import KeyIcon from "@mui/icons-material/Key";
+import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
+import "./Main.css";
 
 function Main() {
-    const [inputCount, setInputCount] = useState(0);
-    const [outputCount, setOutputCount] = useState(0);
-    const [check, setCheck] = useState(false);
-    const [P, setP] = useState();
-    const [Q, setQ] = useState();
+  const [inputEncrypt, setInputEncrypt] = useState("");
+  const [inputEncryptCount, setInputEncryptCount] = useState(0);
+  const [inputDecrypt, setInputDecrypt] = useState("");
+  const [inputDecryptCount, setDecryptInputCount] = useState(0);
+  const [keys, setKeys] = useState(null);
+  const [publicKey, setPublicKey] = useState(null);
+  const [privateKey, setPrivateKey] = useState(null);
+  const [encryption, setEncryption] = useState(null);
+  const [decryption, setDecryption] = useState(null);
+  const [check, setCheck] = useState(false);
+  // var Buffer = require("buffer/").Buffer;
 
-    const changeCheck = () => {
-        setCheck((e) => !e);
+  const GenerateKeys = () => {
+    fetch("/api/keypairs")
+      .then((res) => res.json())
+      .then((data) => setKeys(data));
+  };
+
+  const EncryptedInput = async (value) => {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: value,
+        publicKey: publicKey,
+      }),
     };
+    await fetch("/api/encryption", requestOptions)
+      .then((response) => response.json())
+      .then((data) => setEncryption(data));
+  };
 
-    const getPrimes = (min, max) => {
-        const result = Array(max + 1)
-          .fill(0)
-          .map((_, i) => i);
-        for (let i = 2; i <= Math.sqrt(max + 1); i++) {
-          for (let j = i ** 2; j < max + 1; j += i) delete result[j];
-        }
-        return Object.values(result.slice(Math.max(min, 2)));
-      };
-      
-      const getRandNum = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-      };
-      
-      const getRandPrime = (min, max) => {
-        const primes = getPrimes(min, max);
-        return primes[getRandNum(0, primes.length - 1)];
-      };
+  const DecryptedInput = async (value) => {
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        encryptedData: value,
+        privateKey: privateKey,
+      }),
+    };
+    await fetch("/api/decryption", requestOptions)
+      .then((response) => response.json())
+      .then((data) => setDecryption(data));
+  };
 
-      const generatePnQ = () => {
-        setQ(getRandPrime(1,1000));
-        setP(getRandPrime(1,1000));
-      }
-
-      const handleChangeP = (event) => {
-        setP(event.target.value);
-      };
-
-      const handleChangeQ = (event) => {
-        setQ(event.target.value);
-      };
-
+  const DisplayResult = () => {
+    return check ? encryption?.encryptedData : decryption?.decryptedData
+  }
+  
   return (
     <div>
-        <div className='toggle'>
-            <FormGroup className='toggle'>
-                <FormControlLabel
-                control={<Switch check={check} onChange={changeCheck} />}
-                label={`${check ? 'Decrypt':'Encrypt'}`}
-                />
-            </FormGroup>
+      <div className="keys">
+        <TextField
+          id="input-with-icon-textfield"
+          label="Public Key"
+          multiline
+          rows={3}
+          sx={{ minWidth: 400 }}
+          value={keys?.publicKey}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <KeyIcon />
+              </InputAdornment>
+            ),
+          }}
+          variant="outlined"
+        />
+        <Button
+          onClick={GenerateKeys}
+          variant="contained"
+          startIcon={<SettingsSuggestIcon />}
+          style={{
+            height: 50,
+            backgroundColor: "#60b0f4",
+            fontWeight: "bold",
+          }}
+        >
+          Generate Keys
+        </Button>
+        <TextField
+          id="input-with-icon-textfield"
+          label="Private Key"
+          multiline
+          rows={3}
+          sx={{ minWidth: 400 }}
+          value={keys?.privateKey}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <KeyIcon />
+              </InputAdornment>
+            ),
+          }}
+          variant="outlined"
+        />
+      </div>
+
+      <div className="main">
+        <div className="encrypt">
+          <TextField
+            id="publickey"
+            label="Input Public Key Here"
+            variant="standard"
+            fullWidth
+            multiline
+            rows={3}
+            sx={{
+              mb: 2,
+            }}
+            onChange={(e) => setPublicKey(e.target.value)}
+          />
+          <div className="input">
+            <textarea
+              onChange={(e) => {
+                setInputEncryptCount(e.target.value.length);
+                setInputEncrypt(e.target.value);
+              }}
+            />
+            <div className="count">
+              <span>{inputEncryptCount}</span>
+            </div>
+          </div>
+          <Button onClick={() => {EncryptedInput(inputEncrypt, publicKey); setCheck(true)}} variant="outlined">Encrypt</Button>
         </div>
-
-        <div className='main'>
-            <div className='input'>
-                <textarea onChange={e => setInputCount(e.target.value.length)}/>
-                <div className='count'>
-                    <span>{inputCount}</span>
-                </div>
-            </div>
-
-            <div className='keys'>
-                <div className='prime'>
-                    <TextField id="P" label="P" variant="outlined" focused value={P} onChange={handleChangeP}/>
-                    <TextField id="Q" label="Q" variant="outlined" focused value={Q} onChange={handleChangeQ}/>
-                    <Button variant="contained" startIcon={<CalculateIcon/>}
-                    style={{
-                        height:50,
-                        backgroundColor:'#60b0f4',
-                        fontWeight: "bold",
-                    }}>Calculate Keys</Button>
-                    <Button onClick={generatePnQ} variant="contained" startIcon={<SettingsSuggestIcon/>}
-                    style={{
-                        height:50,
-                        backgroundColor:'#60b0f4',
-                        fontWeight: "bold",
-                    }}>Generate P & Q</Button>   
-                </div>  
-                <div className='key-values'>
-                    <TextField
-                    label="N"
-                    defaultValue=""
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                    />
-                    <TextField
-                    label="L"
-                    defaultValue=""
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                    />
-                    <TextField
-                    label="E"
-                    defaultValue=""
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                    />
-                    <TextField
-                    label="D"
-                    defaultValue=""
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                    />
-                </div>
-            </div>
-
-            <div className='output'>
-                <textarea disabled onChange={e => setOutputCount(e.target.value.length)}/>
-                <div className='count'>
-                    <span>{outputCount}</span>
-                </div>
-            </div>
+        <div className="output">
+          <textarea disabled value={DisplayResult()} />
         </div>
+        <div>
+          <TextField
+            id="publickey"
+            label="Input Private Key Here"
+            variant="standard"
+            fullWidth
+            multiline
+            rows={3}
+            sx={{
+              mb: 2,
+            }}
+            onChange={(e) => setPrivateKey(e.target.value)}
+          />
+          <div className="input">
+            <textarea
+              onChange={(e) => {
+                setDecryptInputCount(e.target.value.length);
+                setInputDecrypt(e.target.value);
+              }}
+            />
+            <div className="count">
+              <span>{inputDecryptCount}</span>
+            </div>
+          </div>
+          <Button onClick={() => {DecryptedInput(inputDecrypt, privateKey); setCheck(false)}} variant="outlined">Decrypt</Button>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Main
+export default Main;
